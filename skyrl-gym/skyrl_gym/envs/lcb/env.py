@@ -21,7 +21,8 @@ class LCBEnv(BaseTextEnv):
         self.tests = json.loads(extras["reward_spec"]["ground_truth"])
 
     def _get_reward(self, action: str) -> float:
-        return compute_score(action, self.tests)
+        # compute_score returns (parsed_code, reward); the scoring hook contract is the scalar reward.
+        return compute_score(action, self.tests)[1]
 
     def step(self, action: str) -> BaseTextEnvStepOutput:
         done = True

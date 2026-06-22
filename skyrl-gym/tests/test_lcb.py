@@ -75,3 +75,15 @@ def test_compute_score(model_response, tests, expected_reward):
     # Skip init() since it's not used in this test
     step_output = env.step(model_response)
     assert step_output["reward"] == expected_reward
+
+
+def test_get_reward_returns_scalar():
+    tests = json.dumps([{"input": "1\n", "output": "1\n", "testtype": "stdin"}])
+    env = skyrl_gym.make(
+        "lcb",
+        env_config=DictConfig({"env_class": "lcb"}),
+        extras={"reward_spec": {"method": "rule", "ground_truth": tests}},
+    )
+    reward = env._get_reward("```python\nprint('unparsed')\n```")
+    assert reward == 0.0
+    assert isinstance(reward, float)
